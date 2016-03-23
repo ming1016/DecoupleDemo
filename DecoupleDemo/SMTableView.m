@@ -238,13 +238,10 @@ static NSString *smTableViewIdentifier = @"SMTableViewCellIdentifier";
     return self.viewModel.dataSourceArray.count;
 }
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    
     self.viewModel.tableViewIdentifier = smTableViewIdentifier;
     self.viewModel.tableView = tableView;
     self.viewModel.cellIndexPath = indexPath;
-    
     return self.viewModel.cell;
-    
 }
 
 #pragma mark - UIScrollView Delegate
