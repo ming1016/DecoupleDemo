@@ -23,20 +23,21 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     [self addKVO];
-    // Do any additional setup after loading the view.
-    [self.view addSubview:self.tbView];
-    [self.tbView mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(self.view).offset(22);
-        make.left.right.bottom.equalTo(self.view);
-    }];
+    [self buildConstraints];
     self.tbStore = [[TestTableStore alloc] initWithViewModel:self.tbView.viewModel];
-    
 }
 - (void)dealloc {
     [self removeKVO];
 }
 
-
+#pragma mark - Constraints
+- (void)buildConstraints {
+    [self.view addSubview:self.tbView];
+    [self.tbView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self.view).offset(22);
+        make.left.right.bottom.equalTo(self.view);
+    }];
+}
 
 #pragma mark - Getter
 - (TestTableView *)tbView {
