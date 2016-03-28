@@ -7,7 +7,7 @@
 //
 
 #import "AppDelegate.h"
-
+#import "SMLagMonitor.h"
 @interface AppDelegate ()
 
 @end
@@ -16,7 +16,8 @@
 
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-    // Override point for customization after application launch.
+    //这里是做卡顿监测
+    [[SMLagMonitor shareInstance] beginMonitor];
     return YES;
 }
 

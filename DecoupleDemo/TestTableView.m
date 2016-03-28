@@ -43,6 +43,13 @@
         cell.contentView.backgroundColor = self.viewModel.cellBackgroundColor;
     }
     
+    //这里是做卡顿监测demo用的，不测时可以注掉
+//    if (self.viewModel.cellIndexPath.row%10 == 0)
+//    {
+//        usleep(200*1000);
+//        NSLog(@"费时测试");
+//    }
+    
     [cell.cellView buildTitle:self.viewModel.dataSourceArray[self.viewModel.cellIndexPath.row]];
     
     self.viewModel.cell = cell;
