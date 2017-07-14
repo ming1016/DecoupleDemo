@@ -2,11 +2,11 @@
 //  SMLagMonitor.m
 //
 //  Created by DaiMing on 16/3/28.
-//  Copyright © 2016年 . All rights reserved.
 //
 
 #import "SMLagMonitor.h"
-#import <CrashReporter/CrashReporter.h>
+#import "SMCallStack.h"
+
 
 @interface SMLagMonitor() {
     int timeoutCount;
@@ -50,7 +50,7 @@
     dispatch_async(dispatch_get_global_queue(0, 0), ^{
         //子线程开启一个持续的loop用来进行监控
         while (YES) {
-            long semaphoreWait = dispatch_semaphore_wait(dispatchSemaphore, dispatch_time(DISPATCH_TIME_NOW, 30*NSEC_PER_MSEC));
+            long semaphoreWait = dispatch_semaphore_wait(dispatchSemaphore, dispatch_time(DISPATCH_TIME_NOW, 20*NSEC_PER_MSEC));
             if (semaphoreWait != 0) {
                 if (!runLoopObserver) {
                     timeoutCount = 0;
@@ -61,16 +61,13 @@
                 //两个runloop的状态，BeforeSources和AfterWaiting这两个状态区间时间能够检测到是否卡顿
                 if (runLoopActivity == kCFRunLoopBeforeSources || runLoopActivity == kCFRunLoopAfterWaiting) {
                     //出现三次出结果
-                    if (++timeoutCount < 3) {
-                        continue;
-                    }
-                    
-                    NSData *lagData = [[[PLCrashReporter alloc]
-                                          initWithConfiguration:[[PLCrashReporterConfig alloc] initWithSignalHandlerType:PLCrashReporterSignalHandlerTypeBSD symbolicationStrategy:PLCrashReporterSymbolicationStrategyAll]] generateLiveReport];
-                    PLCrashReport *lagReport = [[PLCrashReport alloc] initWithData:lagData error:NULL];
-                    NSString *lagReportString = [PLCrashReportTextFormatter stringValueForCrashReport:lagReport withTextFormat:PLCrashReportTextFormatiOS];
-                    //将字符串上传服务器
-                    NSLog(@"lag happen, detail below: \n %@",lagReportString);
+//                    if (++timeoutCount < 3) {
+//                        continue;
+//                    }
+                    NSLog(@"monitor trigger");
+                    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
+                        [SMCallStack callStackWithType:SMCallStackTypeAll];
+                    });
                 } //end activity
             }// end semaphore wait
             timeoutCount = 0;
