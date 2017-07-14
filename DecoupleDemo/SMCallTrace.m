@@ -21,7 +21,7 @@
 #import <objc/runtime.h>
 #import <dispatch/dispatch.h>
 
-//static bool 
+static bool _smCallRecordEnable = true;
 
 struct rebindingsEntry {
     struct smRebinding *rebindings;
