@@ -321,11 +321,12 @@ bool smDladdr(const uintptr_t address, Dl_info* const info) {
     
     return true;
 }
+//通过 address 找到对应的 image 的游标，从而能够得到 image 的更多信息
 uint32_t smDyldImageIndexFromAddress(const uintptr_t address) {
     //返回当前 image 数，这里 image 不是线程安全的，因为另一个线程可能正处在添加或者删除 image 期间
     const uint32_t imageCount = _dyld_image_count();
     const struct mach_header* machHeader = 0;
-    
+    //O(n2)的方式查找，考虑优化
     for (uint32_t iImg = 0; iImg < imageCount; iImg++) {
         //返回一个指向由 image_index 索引的 image 的 mach 头的指针，如果 image_index 超出了范围，那么久返回 NULL
         machHeader = _dyld_get_image_header(iImg);
@@ -338,6 +339,7 @@ uint32_t smDyldImageIndexFromAddress(const uintptr_t address) {
             }
             for (uint32_t iCmd = 0; iCmd < machHeader->ncmds; iCmd++) {
                 const struct load_command* loadCmd = (struct load_command*)cmdPointer;
+                //在遍历mach header里的 load command 时判断 segment command 是32位还是64位的，大部分系统的 segment 都是32位的
                 if (loadCmd->cmd == LC_SEGMENT) {
                     const struct segment_command* segCmd = (struct segment_command*)cmdPointer;
                     if (addressWSlide >= segCmd->vmaddr && addressWSlide < segCmd->vmaddr + segCmd->vmsize) {

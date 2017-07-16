@@ -10,6 +10,7 @@
 #import "TestTableView.h"
 #import "SMTableView.h"
 #import "TestTableStore.h"
+#import "SMCallTrace.h"
 
 @interface testTableViewController ()
 
@@ -22,9 +23,12 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    [SMCallTrace startWithMaxDepth:4];
     [self addKVO];
     [self buildConstraints];
     self.tbStore = [[TestTableStore alloc] initWithViewModel:self.tbView.viewModel];
+    [SMCallTrace stop];
+    [SMCallTrace save];
 }
 - (void)dealloc {
     [self removeKVO];

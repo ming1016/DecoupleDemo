@@ -7,10 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0A20FEAE1F19DB7400C2D3F0 /* SMCallTraceTimeCostModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 0A20FEAD1F19DB7400C2D3F0 /* SMCallTraceTimeCostModel.m */; };
 		0A22D77F1F191741001C4E95 /* SMLagMonitor.m in Sources */ = {isa = PBXBuildFile; fileRef = 0A22D77E1F191741001C4E95 /* SMLagMonitor.m */; };
 		0A22D7831F191790001C4E95 /* SMCallLib.m in Sources */ = {isa = PBXBuildFile; fileRef = 0A22D7821F191790001C4E95 /* SMCallLib.m */; };
 		0A22D7861F19179A001C4E95 /* SMCallTrace.m in Sources */ = {isa = PBXBuildFile; fileRef = 0A22D7851F19179A001C4E95 /* SMCallTrace.m */; };
 		0A22D7891F1917A5001C4E95 /* SMCallStack.m in Sources */ = {isa = PBXBuildFile; fileRef = 0A22D7881F1917A5001C4E95 /* SMCallStack.m */; };
+		0A8561801F1B192A00328830 /* SMCallTraceCore.c in Sources */ = {isa = PBXBuildFile; fileRef = 0A85617E1F1B192A00328830 /* SMCallTraceCore.c */; };
 		180C2EB4B7BFE6026A741E1B /* Pods_DecoupleDemo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3053EE608B97DF0B64033FDE /* Pods_DecoupleDemo.framework */; };
 		3E6E22BD1CA26E5800353643 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 3E6E22BC1CA26E5800353643 /* main.m */; };
 		3E6E22C01CA26E5800353643 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 3E6E22BF1CA26E5800353643 /* AppDelegate.m */; };
@@ -47,6 +49,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		0A20FEAC1F19DB7400C2D3F0 /* SMCallTraceTimeCostModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SMCallTraceTimeCostModel.h; sourceTree = "<group>"; };
+		0A20FEAD1F19DB7400C2D3F0 /* SMCallTraceTimeCostModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SMCallTraceTimeCostModel.m; sourceTree = "<group>"; };
 		0A22D77D1F191741001C4E95 /* SMLagMonitor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SMLagMonitor.h; sourceTree = "<group>"; };
 		0A22D77E1F191741001C4E95 /* SMLagMonitor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SMLagMonitor.m; sourceTree = "<group>"; };
 		0A22D7811F191790001C4E95 /* SMCallLib.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SMCallLib.h; sourceTree = "<group>"; };
@@ -55,6 +59,8 @@
 		0A22D7851F19179A001C4E95 /* SMCallTrace.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SMCallTrace.m; sourceTree = "<group>"; };
 		0A22D7871F1917A5001C4E95 /* SMCallStack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SMCallStack.h; sourceTree = "<group>"; };
 		0A22D7881F1917A5001C4E95 /* SMCallStack.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SMCallStack.m; sourceTree = "<group>"; };
+		0A85617E1F1B192A00328830 /* SMCallTraceCore.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = SMCallTraceCore.c; sourceTree = "<group>"; };
+		0A85617F1F1B192A00328830 /* SMCallTraceCore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SMCallTraceCore.h; sourceTree = "<group>"; };
 		3053EE608B97DF0B64033FDE /* Pods_DecoupleDemo.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_DecoupleDemo.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		3E6E22B81CA26E5800353643 /* DecoupleDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DecoupleDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		3E6E22BC1CA26E5800353643 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -126,6 +132,10 @@
 				0A22D7821F191790001C4E95 /* SMCallLib.m */,
 				0A22D7841F19179A001C4E95 /* SMCallTrace.h */,
 				0A22D7851F19179A001C4E95 /* SMCallTrace.m */,
+				0A85617F1F1B192A00328830 /* SMCallTraceCore.h */,
+				0A85617E1F1B192A00328830 /* SMCallTraceCore.c */,
+				0A20FEAC1F19DB7400C2D3F0 /* SMCallTraceTimeCostModel.h */,
+				0A20FEAD1F19DB7400C2D3F0 /* SMCallTraceTimeCostModel.m */,
 				0A22D7871F1917A5001C4E95 /* SMCallStack.h */,
 				0A22D7881F1917A5001C4E95 /* SMCallStack.m */,
 			);
@@ -367,6 +377,7 @@
 				TargetAttributes = {
 					3E6E22B71CA26E5800353643 = {
 						CreatedOnToolsVersion = 7.2;
+						DevelopmentTeam = 5AJEH63V73;
 					};
 					3E6E22D01CA26E5800353643 = {
 						CreatedOnToolsVersion = 7.2;
@@ -482,7 +493,9 @@
 				3E6E23061CA270C000353643 /* TestTableCellView.m in Sources */,
 				3E6E22F81CA2707800353643 /* SMTableView.m in Sources */,
 				3E6E22C01CA26E5800353643 /* AppDelegate.m in Sources */,
+				0A20FEAE1F19DB7400C2D3F0 /* SMCallTraceTimeCostModel.m in Sources */,
 				0A22D77F1F191741001C4E95 /* SMLagMonitor.m in Sources */,
+				0A8561801F1B192A00328830 /* SMCallTraceCore.c in Sources */,
 				3E6E23081CA270C000353643 /* TestTableView.m in Sources */,
 				3E6E22F91CA2707800353643 /* SMTableViewModel.m in Sources */,
 				3E6E22FD1CA2709300353643 /* testTableViewController.m in Sources */,
@@ -631,6 +644,7 @@
 			baseConfigurationReference = 91261AAA78976C70D82BC23D /* Pods-DecoupleDemo.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				DEVELOPMENT_TEAM = 5AJEH63V73;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/DecoupleDemo",
@@ -647,6 +661,7 @@
 			baseConfigurationReference = FD77083686FBB4B8345419DE /* Pods-DecoupleDemo.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				DEVELOPMENT_TEAM = 5AJEH63V73;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/DecoupleDemo",
