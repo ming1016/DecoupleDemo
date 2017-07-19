@@ -23,7 +23,7 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    [SMCallTrace startWithMaxDepth:4];
+    [SMCallTrace startWithMaxDepth:10];
     [self addKVO];
     [self buildConstraints];
     self.tbStore = [[TestTableStore alloc] initWithViewModel:self.tbView.viewModel];

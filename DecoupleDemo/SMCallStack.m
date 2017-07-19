@@ -107,7 +107,6 @@ NSString *smStackOfThread(thread_t thread) {
     thread_basic_info_t threadBasicInfo;
     mach_msg_type_number_t threadInfoCount = THREAD_INFO_MAX;
     
-    
     if (thread_info((thread_act_t)thread, THREAD_BASIC_INFO, (thread_info_t)threadInfo, &threadInfoCount) == KERN_SUCCESS) {
         threadBasicInfo = (thread_basic_info_t)threadInfo;
         if (!(threadBasicInfo->flags & TH_FLAGS_IDLE)) {

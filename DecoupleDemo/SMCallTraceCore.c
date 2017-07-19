@@ -199,6 +199,7 @@ static int fish_rebind_symbols(struct rebinding rebindings[], size_t rebindings_
     }
     // If this was the first call, register callback for image additions (which is also invoked for
     // existing images, otherwise, just run on existing images
+    //首先是遍历 dyld 里的所有的 image，取出 image header 和 slide。注意第一次调用时主要注册 callback
     if (!_rebindings_head->next) {
         _dyld_register_func_for_add_image(_rebind_symbols_for_image);
     } else {
@@ -239,9 +240,9 @@ static int _smRecordNum;
 static int _smRecordAlloc;
 
 typedef struct {
-    id self;
+    id self; //通过 object_getClass 能够得到 Class 再通过 NSStringFromClass 能够得到类名
     Class cls;
-    SEL cmd;
+    SEL cmd; //通过 NSStringFromSelector 方法能够得到方法名
     uint64_t time; //us
     uintptr_t lr; // link register
 } thread_call_record;
@@ -337,7 +338,10 @@ uintptr_t after_objc_msgSend() {
 }
 
 
-// arm64 hooking magic.
+//replacement objc_msgSend (arm64)
+// https://blog.nelhage.com/2010/10/amd64-and-va_arg/
+// http://infocenter.arm.com/help/topic/com.arm.doc.ihi0055b/IHI0055B_aapcs64.pdf
+// https://developer.apple.com/library/ios/documentation/Xcode/Conceptual/iPhoneOSABIReference/Articles/ARM64FunctionCallingConventions.html
 #define call(b, value) \
 __asm volatile ("stp x8, x9, [sp, #-16]!\n"); \
 __asm volatile ("mov x12, %0\n" :: "r"(value)); \

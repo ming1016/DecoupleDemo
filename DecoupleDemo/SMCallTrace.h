@@ -14,7 +14,7 @@
 + (void)start; //开始记录
 + (void)startWithMaxDepth:(int)depth;
 + (void)startWithMinCost:(double)ms;
-+ (void)startWithMaxDepth:(int)depth minCallCost:(double)ms;
++ (void)startWithMaxDepth:(int)depth minCost:(double)ms;
 + (void)stop; //停止记录
 + (void)save; //保存和打印记录
 //int smRebindSymbols(struct smRebinding rebindings[], size_t rebindings_nel);
