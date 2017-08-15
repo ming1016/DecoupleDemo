@@ -1,0 +1,131 @@
+//
+//  SMLagDB.m
+//  DecoupleDemo
+//
+//  Created by DaiMing on 2017/8/3.
+//  Copyright © 2017年 Starming. All rights reserved.
+//
+
+#import "SMLagDB.h"
+
+
+@interface SMLagDB()
+
+@property (nonatomic, copy) NSString *clsCallDBPath;
+
+@end
+
+@implementation SMLagDB
+
++ (SMLagDB *)shareInstance {
+    static SMLagDB *instance;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        instance = [[SMLagDB alloc] init];
+    });
+    return instance;
+}
+
+- (instancetype)init {
+    if (self = [super init]) {
+        _clsCallDBPath = [PATH_OF_DOCUMENT stringByAppendingPathComponent:@"clsCall.sqlite"];
+        if ([[NSFileManager defaultManager] fileExistsAtPath:_clsCallDBPath] == NO) {
+            FMDatabase *db = [FMDatabase databaseWithPath:_clsCallDBPath];
+            if ([db open]) {
+                /*
+                 cid: 主id
+                 fid: 父id 暂时不用
+                 cls: 类名
+                 mtd: 方法名
+                 path: 完整路径标识
+                 timecost: 方法消耗时长
+                 calldepth: 层级
+                 frequency: 调用次数
+                 lastcall: 是否是最后一个 call
+                 */
+                NSString *createSql = @"create table clscall (cid INTEGER PRIMARY KEY AUTOINCREMENT  NOT NULL, fid integer, cls text, mtd text, path text, timecost integer, calldepth integer, frequency integer, lastcall integer)";
+                [db executeUpdate:createSql];
+            }
+        }
+    }
+    return self;
+}
+
+//添加记录
+- (RACSignal *)increaseWithClsCallModel:(SMCallTraceTimeCostModel *)model {
+    @weakify(self);
+    return [RACSignal createSignal:^RACDisposable *(id<RACSubscriber> subscriber) {
+        @strongify(self);
+        FMDatabase *db = [FMDatabase databaseWithPath:self.clsCallDBPath];
+        if ([db open]) {
+            FMResultSet *rsl = [db executeQuery:@"select cid,frequency from clscall where path = ?", model.path];
+            if ([rsl next]) {
+                //有相同路径就更新路径访问频率
+                int fq = [rsl intForColumn:@"frequency"] + 1;
+                int cid = [rsl intForColumn:@"cid"];
+                [db executeUpdate:@"update clscall set frequency = ? where cid = ?", @(fq), @(cid)];
+            } else {
+                //没有就添加一条记录
+                NSNumber *lastCall = @0;
+                if (model.lastCall) {
+                    lastCall = @1;
+                }
+                [db executeUpdate:@"insert into clscall (cls, mtd, path, timecost, calldepth, frequency, lastcall) values (?, ?, ?, ?, ?, ?, ?)", model.className, model.methodName, model.path, @(model.timeCost), @(model.callDepth), @1, lastCall];
+            }
+            [db close];
+            [subscriber sendCompleted];
+        }
+        return nil;
+    }];
+}
+
+//分页查询
+- (RACSignal *)selectClsCallWithPage:(NSUInteger)page {
+    @weakify(self);
+    return [RACSignal createSignal:^RACDisposable *(id<RACSubscriber> subscriber) {
+        @strongify(self);
+        FMDatabase *db = [FMDatabase databaseWithPath:self.clsCallDBPath];
+        if ([db open]) {
+            FMResultSet *rs = [db executeQuery:@"select * from clscall where lastcall=? order by frequency desc limit ?, 50",@1, @(page * 50)];
+            NSUInteger count = 0;
+            NSMutableArray *arr = [NSMutableArray array];
+            while ([rs next]) {
+                SMCallTraceTimeCostModel *model = [self clsCallModelFromResultSet:rs];
+                [arr addObject:model];
+                count ++;
+            }
+            if (count > 0) {
+                [subscriber sendNext:arr];
+            } else {
+                [subscriber sendError:nil];
+            }
+            [subscriber sendCompleted];
+            [db close];
+        }
+        return nil;
+    }];
+}
+
+//清除数据
+- (void)clearClsCallData {
+    FMDatabase *db = [FMDatabase databaseWithPath:self.clsCallDBPath];
+    if ([db open]) {
+        [db executeUpdate:@"delete from clscall"];
+    }
+}
+
+//结果封装成 model
+- (SMCallTraceTimeCostModel *)clsCallModelFromResultSet:(FMResultSet *)rs {
+    SMCallTraceTimeCostModel *model = [[SMCallTraceTimeCostModel alloc] init];
+    model.className = [rs stringForColumn:@"cls"];
+    model.methodName = [rs stringForColumn:@"mtd"];
+    model.path = [rs stringForColumn:@"path"];
+    model.timeCost = [rs intForColumn:@"timecost"];
+    model.callDepth = [rs intForColumn:@"calldepth"];
+    model.frequency = [rs intForColumn:@"frequency"];
+    model.lastCall = [rs boolForColumn:@"lastcall"];
+    return model;
+}
+
+
+@end

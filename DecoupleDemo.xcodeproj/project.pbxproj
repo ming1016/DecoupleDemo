@@ -12,6 +12,9 @@
 		0A22D7831F191790001C4E95 /* SMCallLib.m in Sources */ = {isa = PBXBuildFile; fileRef = 0A22D7821F191790001C4E95 /* SMCallLib.m */; };
 		0A22D7861F19179A001C4E95 /* SMCallTrace.m in Sources */ = {isa = PBXBuildFile; fileRef = 0A22D7851F19179A001C4E95 /* SMCallTrace.m */; };
 		0A22D7891F1917A5001C4E95 /* SMCallStack.m in Sources */ = {isa = PBXBuildFile; fileRef = 0A22D7881F1917A5001C4E95 /* SMCallStack.m */; };
+		0A29BD041F3C14180025CF3C /* SMClsCallViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0A29BD031F3C14180025CF3C /* SMClsCallViewController.m */; };
+		0A3027121F4179AF00DAAFE4 /* SMClsCallCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 0A3027111F4179AF00DAAFE4 /* SMClsCallCell.m */; };
+		0A30E0081F3302D700EC4317 /* SMLagDB.m in Sources */ = {isa = PBXBuildFile; fileRef = 0A30E0071F3302D700EC4317 /* SMLagDB.m */; };
 		0A8561801F1B192A00328830 /* SMCallTraceCore.c in Sources */ = {isa = PBXBuildFile; fileRef = 0A85617E1F1B192A00328830 /* SMCallTraceCore.c */; };
 		180C2EB4B7BFE6026A741E1B /* Pods_DecoupleDemo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3053EE608B97DF0B64033FDE /* Pods_DecoupleDemo.framework */; };
 		3E6E22BD1CA26E5800353643 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 3E6E22BC1CA26E5800353643 /* main.m */; };
@@ -59,6 +62,12 @@
 		0A22D7851F19179A001C4E95 /* SMCallTrace.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SMCallTrace.m; sourceTree = "<group>"; };
 		0A22D7871F1917A5001C4E95 /* SMCallStack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SMCallStack.h; sourceTree = "<group>"; };
 		0A22D7881F1917A5001C4E95 /* SMCallStack.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SMCallStack.m; sourceTree = "<group>"; };
+		0A29BD021F3C14180025CF3C /* SMClsCallViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SMClsCallViewController.h; sourceTree = "<group>"; };
+		0A29BD031F3C14180025CF3C /* SMClsCallViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SMClsCallViewController.m; sourceTree = "<group>"; };
+		0A3027101F4179AF00DAAFE4 /* SMClsCallCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SMClsCallCell.h; sourceTree = "<group>"; };
+		0A3027111F4179AF00DAAFE4 /* SMClsCallCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SMClsCallCell.m; sourceTree = "<group>"; };
+		0A30E0061F3302D700EC4317 /* SMLagDB.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SMLagDB.h; sourceTree = "<group>"; };
+		0A30E0071F3302D700EC4317 /* SMLagDB.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SMLagDB.m; sourceTree = "<group>"; };
 		0A85617E1F1B192A00328830 /* SMCallTraceCore.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = SMCallTraceCore.c; sourceTree = "<group>"; };
 		0A85617F1F1B192A00328830 /* SMCallTraceCore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SMCallTraceCore.h; sourceTree = "<group>"; };
 		3053EE608B97DF0B64033FDE /* Pods_DecoupleDemo.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_DecoupleDemo.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -142,6 +151,26 @@
 			name = SMCall;
 			sourceTree = "<group>";
 		};
+		0A3025E61F34743F00C3539E /* Show */ = {
+			isa = PBXGroup;
+			children = (
+				0A29BD021F3C14180025CF3C /* SMClsCallViewController.h */,
+				0A29BD031F3C14180025CF3C /* SMClsCallViewController.m */,
+				0A3027101F4179AF00DAAFE4 /* SMClsCallCell.h */,
+				0A3027111F4179AF00DAAFE4 /* SMClsCallCell.m */,
+			);
+			name = Show;
+			sourceTree = "<group>";
+		};
+		0A30E0051F3302AD00EC4317 /* DB */ = {
+			isa = PBXGroup;
+			children = (
+				0A30E0061F3302D700EC4317 /* SMLagDB.h */,
+				0A30E0071F3302D700EC4317 /* SMLagDB.m */,
+			);
+			name = DB;
+			sourceTree = "<group>";
+		};
 		23C3AF7CC65E2437D3989B30 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
@@ -156,6 +185,8 @@
 		3E214E4D1CA913D30058DE4F /* LagMonitor */ = {
 			isa = PBXGroup;
 			children = (
+				0A3025E61F34743F00C3539E /* Show */,
+				0A30E0051F3302AD00EC4317 /* DB */,
 				0A22D7801F19177D001C4E95 /* SMCall */,
 				0A22D77D1F191741001C4E95 /* SMLagMonitor.h */,
 				0A22D77E1F191741001C4E95 /* SMLagMonitor.m */,
@@ -492,9 +523,12 @@
 				3E6E230C1CA270CF00353643 /* TestTableStore.m in Sources */,
 				3E6E23061CA270C000353643 /* TestTableCellView.m in Sources */,
 				3E6E22F81CA2707800353643 /* SMTableView.m in Sources */,
+				0A3027121F4179AF00DAAFE4 /* SMClsCallCell.m in Sources */,
 				3E6E22C01CA26E5800353643 /* AppDelegate.m in Sources */,
+				0A29BD041F3C14180025CF3C /* SMClsCallViewController.m in Sources */,
 				0A20FEAE1F19DB7400C2D3F0 /* SMCallTraceTimeCostModel.m in Sources */,
 				0A22D77F1F191741001C4E95 /* SMLagMonitor.m in Sources */,
+				0A30E0081F3302D700EC4317 /* SMLagDB.m in Sources */,
 				0A8561801F1B192A00328830 /* SMCallTraceCore.c in Sources */,
 				3E6E23081CA270C000353643 /* TestTableView.m in Sources */,
 				3E6E22F91CA2707800353643 /* SMTableViewModel.m in Sources */,

@@ -21,14 +21,19 @@
 
 @implementation testTableViewController
 
+- (instancetype)init {
+    if (self = [super init]) {
+    }
+    return self;
+}
+
 - (void)viewDidLoad {
     [super viewDidLoad];
-    [SMCallTrace startWithMaxDepth:10];
+    [SMCallTrace startWithMaxDepth:3];
     [self addKVO];
     [self buildConstraints];
     self.tbStore = [[TestTableStore alloc] initWithViewModel:self.tbView.viewModel];
-    [SMCallTrace stop];
-    [SMCallTrace save];
+    [SMCallTrace stopSaveAndClean];
 }
 - (void)dealloc {
     [self removeKVO];

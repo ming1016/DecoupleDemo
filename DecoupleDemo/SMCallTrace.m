@@ -9,6 +9,7 @@
 #import "SMCallTrace.h"
 #import "SMCallLib.h"
 #import "SMCallTraceTimeCostModel.h"
+#import "SMLagDB.h"
 
 
 @implementation SMCallTrace
@@ -38,13 +39,28 @@
     NSMutableString *mStr = [NSMutableString new];
     NSArray<SMCallTraceTimeCostModel *> *arr = [self loadRecords];
     for (SMCallTraceTimeCostModel *model in arr) {
+        model.path = [NSString stringWithFormat:@"[%@ %@]",model.className,model.methodName];
         [self appendRecord:model to:mStr];
     }
     NSLog(@"%@",mStr);
 }
++ (void)stopSaveAndClean {
+    [SMCallTrace stop];
+    [SMCallTrace save];
+    smClearCallRecords();
+}
 + (void)appendRecord:(SMCallTraceTimeCostModel *)cost to:(NSMutableString *)mStr {
-    [mStr appendFormat:@"%@\n",[cost des]];
+    [mStr appendFormat:@"%@\n path%@\n",[cost des],cost.path];
+    if (cost.subCosts.count < 1) {
+        cost.lastCall = YES;
+    }
+    
+    [[[SMLagDB shareInstance] increaseWithClsCallModel:cost] subscribeNext:^(id x) {
+        //
+    }];
+    
     for (SMCallTraceTimeCostModel *model in cost.subCosts) {
+        model.path = [NSString stringWithFormat:@"%@ - [%@ %@]",cost.path,model.className,model.methodName];
         [self appendRecord:model to:mStr];
     }
 }
@@ -85,10 +101,6 @@
     }
     return arr;
 }
-
-
-
-
 
 
 @end
