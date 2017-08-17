@@ -6,6 +6,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "SMCallLib.h"
 
 typedef NS_ENUM(NSUInteger, SMCallStackType) {
     SMCallStackTypeAll,     //全部线程
@@ -13,8 +14,12 @@ typedef NS_ENUM(NSUInteger, SMCallStackType) {
     SMCallStackTypeCurrent  //当前线程
 };
 
+
+
 @interface SMCallStack : NSObject
 
 + (NSString *)callStackWithType:(SMCallStackType)type;
+
+extern NSString *smStackOfThread(thread_t thread);
 
 @end

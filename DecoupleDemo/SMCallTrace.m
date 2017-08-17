@@ -39,6 +39,7 @@
     NSMutableString *mStr = [NSMutableString new];
     NSArray<SMCallTraceTimeCostModel *> *arr = [self loadRecords];
     for (SMCallTraceTimeCostModel *model in arr) {
+        //记录方法路径
         model.path = [NSString stringWithFormat:@"[%@ %@]",model.className,model.methodName];
         [self appendRecord:model to:mStr];
     }
@@ -54,12 +55,11 @@
     if (cost.subCosts.count < 1) {
         cost.lastCall = YES;
     }
-    
-    [[[SMLagDB shareInstance] increaseWithClsCallModel:cost] subscribeNext:^(id x) {
-        //
-    }];
+    //记录到数据库中
+    [[[SMLagDB shareInstance] increaseWithClsCallModel:cost] subscribeNext:^(id x) {}];
     
     for (SMCallTraceTimeCostModel *model in cost.subCosts) {
+        //记录方法的子方法的路径
         model.path = [NSString stringWithFormat:@"%@ - [%@ %@]",cost.path,model.className,model.methodName];
         [self appendRecord:model to:mStr];
     }

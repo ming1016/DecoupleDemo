@@ -1,22 +1,21 @@
 //
-//  SMClsCallViewController.m
+//  SMStackViewController.m
 //  DecoupleDemo
 //
-//  Created by DaiMing on 2017/8/10.
+//  Created by DaiMing on 2017/8/17.
 //  Copyright © 2017年 Starming. All rights reserved.
 //
 
-#import "SMClsCallViewController.h"
+#import "SMStackViewController.h"
 #import "MJRefresh.h"
-#import "SMClsCallCell.h"
+#import "SMStackCell.h"
 #import "Masonry.h"
 #import "SMLagDB.h"
-#import "SMCallTraceTimeCostModel.h"
 #import "SMLagButton.h"
 
-static NSString *smClsCallCellIdentifier = @"smClsCallCell";
+static NSString *smStackCellIdentifier = @"smStackCell";
 
-@interface SMClsCallViewController ()<UITableViewDataSource,UITableViewDelegate>
+@interface SMStackViewController ()<UITableViewDelegate,UITableViewDataSource>
 
 @property (nonatomic, strong) NSMutableArray *listData;
 @property (nonatomic, strong) UITableView *tbView;
@@ -26,14 +25,14 @@ static NSString *smClsCallCellIdentifier = @"smClsCallCell";
 
 @end
 
-@implementation SMClsCallViewController
+@implementation SMStackViewController
 
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.view.backgroundColor = [UIColor whiteColor];
     self.page = 0;
     [self selectItems];
-    [self.tbView registerClass:[UITableViewCell class] forCellReuseIdentifier:smClsCallCellIdentifier];
+    [self.tbView registerClass:[UITableViewCell class] forCellReuseIdentifier:smStackCellIdentifier];
     [self.view addSubview:self.tbView];
     [self.tbView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.bottom.left.right.equalTo(self.view);
@@ -53,15 +52,10 @@ static NSString *smClsCallCellIdentifier = @"smClsCallCell";
     }];
 }
 
-- (void)didReceiveMemoryWarning {
-    [super didReceiveMemoryWarning];
-    
-}
-
 - (void)selectItems {
     RACScheduler *scheduler = [RACScheduler schedulerWithPriority:RACSchedulerPriorityHigh];
     @weakify(self);
-    [[[[[SMLagDB shareInstance] selectClsCallWithPage:self.page]
+    [[[[[SMLagDB shareInstance] selectStackWithPage:self.page]
     subscribeOn:scheduler]
     deliverOn:[RACScheduler mainThreadScheduler]]
     subscribeNext:^(id x) {
@@ -97,20 +91,18 @@ static NSString *smClsCallCellIdentifier = @"smClsCallCell";
     return self.listData.count;
 }
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
-    SMCallTraceTimeCostModel *model = self.listData[indexPath.row];
-    CGRect frame = [model.path boundingRectWithSize:CGSizeMake([UIScreen mainScreen].bounds.size.width - 20*2, 999) options:NSStringDrawingUsesFontLeading | NSStringDrawingUsesLineFragmentOrigin | NSStringDrawingTruncatesLastVisibleLine attributes:@{NSFontAttributeName:[UIFont systemFontOfSize:12]} context:nil];
-    return 80 + frame.size.height;
+    return 300;
 }
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:smClsCallCellIdentifier];
+    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:smStackCellIdentifier];
     cell.backgroundColor = [UIColor clearColor];
     cell.selected = UITableViewCellSelectionStyleNone;
     cell.contentView.backgroundColor = [UIColor clearColor];
     
-    SMClsCallCell *v = (SMClsCallCell *)[cell viewWithTag:123422];
+    SMStackCell *v = (SMStackCell *)[cell viewWithTag:231876];
     if (!v) {
-        v = [[SMClsCallCell alloc] init];
-        v.tag = 123422;
+        v = [[SMStackCell alloc] init];
+        v.tag = 231876;
         if (cell) {
             [cell.contentView addSubview:v];
             [v mas_makeConstraints:^(MASConstraintMaker *make) {
@@ -119,11 +111,11 @@ static NSString *smClsCallCellIdentifier = @"smClsCallCell";
         }
     }
     
-    SMCallTraceTimeCostModel *model = self.listData[indexPath.row];
-    [v updateWithModel:model];
-    
+    NSString *str = self.listData[indexPath.row];
+    [v updateWithStr:str];
     return cell;
 }
+
 - (void)close {
     [self.navigationController popViewControllerAnimated:YES];
 }
@@ -141,7 +133,7 @@ static NSString *smClsCallCellIdentifier = @"smClsCallCell";
         _tbView.dataSource = self;
         _tbView.delegate = self;
         _tbView.backgroundColor = [UIColor clearColor];
-        _tbView.separatorStyle = UITableViewCellSeparatorStyleNone;
+        _tbView.separatorStyle = UITableViewCellSelectionStyleNone;
         //mj
         _tbView.mj_footer = [MJRefreshAutoNormalFooter footerWithRefreshingTarget:self refreshingAction:@selector(selectItems)];
         MJRefreshAutoNormalFooter *footer = (MJRefreshAutoNormalFooter *)_tbView.mj_footer;
@@ -150,7 +142,6 @@ static NSString *smClsCallCellIdentifier = @"smClsCallCell";
         [footer setTitle:@"上拉读取更多" forState:MJRefreshStateIdle];
         [footer setTitle:@"正在读取..." forState:MJRefreshStateRefreshing];
         [footer setTitle:@"已读取完毕" forState:MJRefreshStateNoMoreData];
-        
     }
     return _tbView;
 }
@@ -171,7 +162,7 @@ static NSString *smClsCallCellIdentifier = @"smClsCallCell";
         @weakify(self);
         [[_clearAndCloseView click] subscribeNext:^(id x) {
             @strongify(self);
-            [[SMLagDB shareInstance] clearClsCallData];
+            [[SMLagDB shareInstance] clearStackData];
             [self close];
         }];
     }

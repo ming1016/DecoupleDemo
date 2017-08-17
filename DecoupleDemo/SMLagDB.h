@@ -20,6 +20,11 @@
 @interface SMLagDB : NSObject
 
 + (SMLagDB *)shareInstance;
+/*------------卡顿和CPU超标堆栈---------------*/
+- (RACSignal *)increaseWithStackString:(NSString *)str;
+- (RACSignal *)selectStackWithPage:(NSUInteger)page;
+- (void)clearStackData;
+/*------------ClsCall方法调用频次-------------*/
 //添加记录
 - (RACSignal *)increaseWithClsCallModel:(SMCallTraceTimeCostModel *)model;
 //分页查询

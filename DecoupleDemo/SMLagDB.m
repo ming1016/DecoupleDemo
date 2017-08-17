@@ -12,6 +12,7 @@
 @interface SMLagDB()
 
 @property (nonatomic, copy) NSString *clsCallDBPath;
+@property (nonatomic, strong) FMDatabaseQueue *dbQueue;
 
 @end
 
@@ -29,10 +30,11 @@
 - (instancetype)init {
     if (self = [super init]) {
         _clsCallDBPath = [PATH_OF_DOCUMENT stringByAppendingPathComponent:@"clsCall.sqlite"];
+        _dbQueue = [FMDatabaseQueue databaseQueueWithPath:_clsCallDBPath];
         if ([[NSFileManager defaultManager] fileExistsAtPath:_clsCallDBPath] == NO) {
             FMDatabase *db = [FMDatabase databaseWithPath:_clsCallDBPath];
             if ([db open]) {
-                /*
+                /* clsCall 表记录方法读取频次的表
                  cid: 主id
                  fid: 父id 暂时不用
                  cls: 类名
@@ -43,38 +45,99 @@
                  frequency: 调用次数
                  lastcall: 是否是最后一个 call
                  */
-                NSString *createSql = @"create table clscall (cid INTEGER PRIMARY KEY AUTOINCREMENT  NOT NULL, fid integer, cls text, mtd text, path text, timecost integer, calldepth integer, frequency integer, lastcall integer)";
+                NSString *createSql = @"create table clscall (cid INTEGER PRIMARY KEY AUTOINCREMENT  NOT NULL, fid integer, cls text, mtd text, path text, timecost double, calldepth integer, frequency integer, lastcall integer)";
                 [db executeUpdate:createSql];
+                
+                /* stack 表记录
+                 sid: id
+                 stackcontent: 堆栈内容
+                 insertdate: 日期
+                 */
+                NSString *createStackSql = @"create table stack (sid INTEGER PRIMARY KEY AUTOINCREMENT  NOT NULL, stackcontent text, insertdate double)";
+                [db executeUpdate:createStackSql];
             }
         }
     }
     return self;
 }
 
-//添加记录
-- (RACSignal *)increaseWithClsCallModel:(SMCallTraceTimeCostModel *)model {
+#pragma mark - 卡顿和CPU超标堆栈
+//添加 stack 表数据
+- (RACSignal *)increaseWithStackString:(NSString *)str {
+    @weakify(self);
+    return [RACSignal createSignal:^RACDisposable *(id<RACSubscriber> subscriber) {
+        @strongify(self);
+        [self.dbQueue inDatabase:^(FMDatabase *db){
+            if ([db open]) {
+                [db executeUpdate:@"insert into stack (stackcontent, insertdate) values (?, ?)",str, [NSDate date]];
+                [db close];
+                [subscriber sendCompleted];
+            }
+        }];
+        return nil;
+    }];
+}
+//stack 分页查询
+- (RACSignal *)selectStackWithPage:(NSUInteger)page {
     @weakify(self);
     return [RACSignal createSignal:^RACDisposable *(id<RACSubscriber> subscriber) {
         @strongify(self);
         FMDatabase *db = [FMDatabase databaseWithPath:self.clsCallDBPath];
         if ([db open]) {
-            FMResultSet *rsl = [db executeQuery:@"select cid,frequency from clscall where path = ?", model.path];
-            if ([rsl next]) {
-                //有相同路径就更新路径访问频率
-                int fq = [rsl intForColumn:@"frequency"] + 1;
-                int cid = [rsl intForColumn:@"cid"];
-                [db executeUpdate:@"update clscall set frequency = ? where cid = ?", @(fq), @(cid)];
-            } else {
-                //没有就添加一条记录
-                NSNumber *lastCall = @0;
-                if (model.lastCall) {
-                    lastCall = @1;
-                }
-                [db executeUpdate:@"insert into clscall (cls, mtd, path, timecost, calldepth, frequency, lastcall) values (?, ?, ?, ?, ?, ?, ?)", model.className, model.methodName, model.path, @(model.timeCost), @(model.callDepth), @1, lastCall];
+            FMResultSet *rs = [db executeQuery:@"select * from stack order by sid desc limit ?, 50",@(page * 50)];
+            NSUInteger count = 0;
+            NSMutableArray *arr = [NSMutableArray array];
+            while ([rs next]) {
+                [arr addObject:[rs stringForColumn:@"stackcontent"]];
+                count++;
             }
-            [db close];
+            if (count > 0) {
+                [subscriber sendNext:arr];
+            } else {
+                [subscriber sendError:nil];
+            }
             [subscriber sendCompleted];
+            [db close];
         }
+        return nil;
+    }];
+}
+//stack 表清除
+- (void)clearStackData {
+    FMDatabase *db = [FMDatabase databaseWithPath:self.clsCallDBPath];
+    if ([db open]) {
+        [db executeUpdate:@"delete from stack"];
+        [db close];
+    }
+}
+
+#pragma mark - ClsCall方法调用频次
+//添加记录
+- (RACSignal *)increaseWithClsCallModel:(SMCallTraceTimeCostModel *)model {
+    @weakify(self);
+    return [RACSignal createSignal:^RACDisposable *(id<RACSubscriber> subscriber) {
+        @strongify(self);
+        [self.dbQueue inDatabase:^(FMDatabase *db){
+            if ([db open]) {
+                FMResultSet *rsl = [db executeQuery:@"select cid,frequency from clscall where path = ?", model.path];
+                if ([rsl next]) {
+                    //有相同路径就更新路径访问频率
+                    int fq = [rsl intForColumn:@"frequency"] + 1;
+                    int cid = [rsl intForColumn:@"cid"];
+                    [db executeUpdate:@"update clscall set frequency = ? where cid = ?", @(fq), @(cid)];
+                } else {
+                    //没有就添加一条记录
+                    NSNumber *lastCall = @0;
+                    if (model.lastCall) {
+                        lastCall = @1;
+                    }
+                    [db executeUpdate:@"insert into clscall (cls, mtd, path, timecost, calldepth, frequency, lastcall) values (?, ?, ?, ?, ?, ?, ?)", model.className, model.methodName, model.path, @(model.timeCost), @(model.callDepth), @1, lastCall];
+                }
+                [db close];
+                [subscriber sendCompleted];
+            }
+        }];
+        
         return nil;
     }];
 }
@@ -111,6 +174,7 @@
     FMDatabase *db = [FMDatabase databaseWithPath:self.clsCallDBPath];
     if ([db open]) {
         [db executeUpdate:@"delete from clscall"];
+        [db close];
     }
 }
 
@@ -120,7 +184,7 @@
     model.className = [rs stringForColumn:@"cls"];
     model.methodName = [rs stringForColumn:@"mtd"];
     model.path = [rs stringForColumn:@"path"];
-    model.timeCost = [rs intForColumn:@"timecost"];
+    model.timeCost = [rs doubleForColumn:@"timecost"];
     model.callDepth = [rs intForColumn:@"calldepth"];
     model.frequency = [rs intForColumn:@"frequency"];
     model.lastCall = [rs boolForColumn:@"lastcall"];

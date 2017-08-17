@@ -46,7 +46,7 @@
 
 - (void)updateWithModel:(SMCallTraceTimeCostModel *)model {
     self.nameLb.text = [NSString stringWithFormat:@"[%@ %@]",model.className,model.methodName];
-    self.desLb.text = [NSString stringWithFormat:@"频次:%lu 深度:%lu",(unsigned long)model.frequency,(unsigned long)model.callDepth];
+    self.desLb.text = [NSString stringWithFormat:@"频次:%lu 深度:%lu 耗时:%f",(unsigned long)model.frequency,(unsigned long)model.callDepth, model.timeCost * 1000];
     self.pathLb.text = model.path;
 }
 

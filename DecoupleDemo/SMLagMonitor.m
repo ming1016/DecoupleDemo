@@ -6,7 +6,7 @@
 
 #import "SMLagMonitor.h"
 #import "SMCallStack.h"
-
+#import "SMCPUMonitor.h"
 
 @interface SMLagMonitor() {
     int timeoutCount;
@@ -15,7 +15,7 @@
     dispatch_semaphore_t dispatchSemaphore;
     CFRunLoopActivity runLoopActivity;
 }
-
+@property (nonatomic, strong) NSTimer *cpuMonitorTimer;
 @end
 
 @implementation SMLagMonitor
@@ -31,6 +31,13 @@
 }
 
 - (void)beginMonitor {
+    //监测 CPU 消耗
+    self.cpuMonitorTimer = [NSTimer scheduledTimerWithTimeInterval:3
+                                                             target:self
+                                                           selector:@selector(updateCPUInfo)
+                                                           userInfo:nil
+                                                            repeats:YES];
+    //监测卡顿
     if (runLoopObserver) {
         return;
     }
@@ -66,7 +73,7 @@
 //                    }
                     NSLog(@"monitor trigger");
                     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
-                        [SMCallStack callStackWithType:SMCallStackTypeAll];
+//                        [SMCallStack callStackWithType:SMCallStackTypeAll];
                     });
                 } //end activity
             }// end semaphore wait
@@ -77,6 +84,7 @@
 }
 
 - (void)endMonitor {
+    [self.cpuMonitorTimer invalidate];
     if (!runLoopObserver) {
         return;
     }
@@ -86,6 +94,10 @@
 }
 
 #pragma mark - Private
+- (void)updateCPUInfo {
+    [SMCPUMonitor updateCPU];
+}
+
 static void runLoopObserverCallBack(CFRunLoopObserverRef observer, CFRunLoopActivity activity, void *info){
     SMLagMonitor *lagMonitor = (__bridge SMLagMonitor*)info;
     lagMonitor->runLoopActivity = activity;
