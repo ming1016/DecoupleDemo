@@ -17,7 +17,7 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     //这里是做卡顿监测
-    [[SMLagMonitor shareInstance] beginMonitor];
+//    [[SMLagMonitor shareInstance] beginMonitor];
     return YES;
 }
 
